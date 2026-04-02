@@ -26,8 +26,8 @@ const config: Config = {
         'border-main':    '#E5E5E5',
       },
       fontFamily: {
-        sans: ['DM Sans', 'sans-serif'],
-        mono: ['DM Mono', 'monospace'],
+        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+        mono: ['DM Mono', 'Courier New', 'monospace'],
       },
       borderRadius: {
         'xl': '12px',
