@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { logAction } from '@/lib/journal'
 
 // PUT /api/admin/utilisateurs/[id]/toggle — activer/désactiver
 export async function PUT(_request: NextRequest, { params }: { params: { id: string } }) {
@@ -23,6 +24,12 @@ export async function PUT(_request: NextRequest, { params }: { params: { id: str
       where: { id: params.id },
       data: { actif: !utilisateur.actif },
       select: { id: true, nom: true, email: true, role: true, actif: true, createdAt: true },
+    })
+
+    await logAction(session.user.id, 'UTILISATEUR_TOGGLE', {
+      utilisateurId: params.id,
+      nom: utilisateur.nom,
+      actif: updated.actif,
     })
 
     return NextResponse.json(updated)

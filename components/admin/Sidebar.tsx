@@ -16,43 +16,77 @@ import {
   Star,
   LogOut,
   ChevronRight,
+  TrendingUp,
+  MapPin,
+  ScrollText,
+  Shield,
 } from 'lucide-react'
 
-const navItems = [
+// ─── Définition des menus ─────────────────────────────────────────────────────
+
+type Role = 'VENDEUR' | 'ADMIN' | 'SUPER_ADMIN'
+
+interface NavItem {
+  href: string
+  label: string
+  icon: React.ElementType
+  roles: Role[]
+}
+
+interface NavGroup {
+  group: string
+  items: NavItem[]
+}
+
+const NAV_GROUPS: NavGroup[] = [
   {
     group: 'Principal',
     items: [
-      { href: '/admin', label: 'Tableau de bord', icon: LayoutDashboard },
-      { href: '/admin/produits', label: 'Produits', icon: Package },
-      { href: '/admin/commandes', label: 'Commandes', icon: ShoppingCart },
-      { href: '/admin/devis', label: 'Devis', icon: FileText },
+      { href: '/admin', label: 'Tableau de bord', icon: LayoutDashboard, roles: ['VENDEUR', 'ADMIN', 'SUPER_ADMIN'] },
+      { href: '/admin/produits', label: 'Produits', icon: Package, roles: ['VENDEUR', 'ADMIN', 'SUPER_ADMIN'] },
+      { href: '/admin/commandes', label: 'Commandes', icon: ShoppingCart, roles: ['VENDEUR', 'ADMIN', 'SUPER_ADMIN'] },
+      { href: '/admin/devis', label: 'Devis', icon: FileText, roles: ['VENDEUR', 'ADMIN', 'SUPER_ADMIN'] },
     ],
   },
   {
     group: 'Gestion',
     items: [
-      { href: '/admin/clients', label: 'Clients', icon: Users },
-      { href: '/admin/commissions', label: 'Commissions', icon: Star },
-      { href: '/admin/comptabilite', label: 'Comptabilité', icon: DollarSign },
+      { href: '/admin/clients', label: 'Clients', icon: Users, roles: ['VENDEUR', 'ADMIN', 'SUPER_ADMIN'] },
+      // Vendeur voit ses commissions, Admin/SuperAdmin voient toutes les commissions
+      { href: '/admin/commissions/vendeur', label: 'Mes commissions', icon: Star, roles: ['VENDEUR'] },
+      { href: '/admin/commissions', label: 'Commissions', icon: TrendingUp, roles: ['ADMIN', 'SUPER_ADMIN'] },
+      { href: '/admin/comptabilite', label: 'Comptabilité', icon: DollarSign, roles: ['ADMIN', 'SUPER_ADMIN'] },
     ],
   },
   {
-    group: 'Contenu',
+    group: 'Contenu & Config',
     items: [
-      { href: '/admin/promotions', label: 'Promotions', icon: Megaphone },
-      { href: '/admin/contenu', label: 'Contenu site', icon: BarChart2 },
-      { href: '/admin/utilisateurs', label: 'Utilisateurs', icon: Users },
-      { href: '/admin/parametres', label: 'Paramètres', icon: Settings },
+      { href: '/admin/contenu', label: 'Contenu site', icon: BarChart2, roles: ['VENDEUR', 'ADMIN', 'SUPER_ADMIN'] },
+      { href: '/admin/promotions', label: 'Promotions', icon: Megaphone, roles: ['ADMIN', 'SUPER_ADMIN'] },
+      { href: '/admin/parametres/zones', label: 'Zones livraison', icon: MapPin, roles: ['ADMIN', 'SUPER_ADMIN'] },
+    ],
+  },
+  {
+    group: 'Administration',
+    items: [
+      { href: '/admin/utilisateurs', label: 'Équipe', icon: Users, roles: ['SUPER_ADMIN'] },
+      { href: '/admin/parametres', label: 'Paramètres', icon: Settings, roles: ['SUPER_ADMIN'] },
+      { href: '/admin/journal', label: 'Journal activité', icon: ScrollText, roles: ['SUPER_ADMIN'] },
     ],
   },
 ]
 
+// ─── Component ────────────────────────────────────────────────────────────────
+
 export default function Sidebar() {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const role = (session?.user?.role ?? 'VENDEUR') as Role
 
   const isActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin'
+    // Éviter que /admin/commissions soit actif quand on est sur /admin/commissions/vendeur
+    if (href === '/admin/commissions') return pathname === '/admin/commissions'
     return pathname.startsWith(href)
   }
 
@@ -65,20 +99,25 @@ export default function Sidebar() {
         .slice(0, 2)
     : 'AD'
 
+  const filteredGroups = NAV_GROUPS
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => item.roles.includes(role)),
+    }))
+    .filter((group) => group.items.length > 0)
+
   return (
     <aside className="w-56 bg-blue-teralite min-h-screen flex flex-col flex-shrink-0">
       {/* Logo */}
       <div className="px-5 py-4 border-b border-white/10">
         <Link href="/admin">
-          <span className="text-white font-semibold text-lg tracking-wide">
-            Teralite
-          </span>
+          <span className="text-white font-semibold text-lg tracking-wide">Teralite</span>
         </Link>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
-        {navItems.map((group) => (
+        {filteredGroups.map((group) => (
           <div key={group.group} className="mb-2">
             <p className="text-xs text-white/40 uppercase tracking-wider px-3 mb-2 mt-4">
               {group.group}
@@ -108,7 +147,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer sidebar — infos utilisateur + déconnexion */}
+      {/* Footer — infos utilisateur + déconnexion */}
       <div className="px-3 py-4 border-t border-white/10">
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="w-7 h-7 rounded-full bg-orange-teralite flex items-center justify-center text-xs font-semibold text-white flex-shrink-0">
@@ -118,9 +157,10 @@ export default function Sidebar() {
             <p className="text-xs font-medium text-white truncate">
               {session?.user?.name ?? 'Administrateur'}
             </p>
-            <p className="text-xs text-white/50 truncate">
-              {session?.user?.role ?? 'Admin'}
-            </p>
+            <div className="flex items-center gap-1">
+              {role === 'SUPER_ADMIN' && <Shield className="w-2.5 h-2.5 text-orange-teralite" />}
+              <p className="text-xs text-white/50 truncate">{role}</p>
+            </div>
           </div>
         </div>
         <button

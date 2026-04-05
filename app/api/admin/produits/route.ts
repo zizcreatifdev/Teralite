@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { slugify } from '@/lib/utils'
+import { logAction } from '@/lib/journal'
 
 const schemaProduit = z.object({
   nom: z.string().min(2).max(200),
@@ -119,6 +120,7 @@ export async function POST(request: NextRequest) {
       include: { photos: true },
     })
 
+    await logAction(session.user.id, 'PRODUIT_CREE', { produitId: produit.id, nom: produit.nom })
     return NextResponse.json(produit, { status: 201 })
   } catch (err) {
     if (err instanceof z.ZodError) {

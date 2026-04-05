@@ -1,8 +1,8 @@
 # PROJECT_STATE.md
 
-## Phase actuelle : 5b — Commissions & équipe ✅ COMPLÉTÉE
+## Phase actuelle : 5c — Paramètres système, journal activité, sidebar ✅ COMPLÉTÉE
 
-## Dernière action : Phase 5b complétée le 2026-04-05
+## Dernière action : Phase 5c complétée le 2026-04-05
 
 ## Ce qui est fait
 
@@ -271,6 +271,38 @@
 
 #### Migration SQL
 - ✅ Aucune migration nécessaire — tous les modèles (Commission, ConfigCommission, Utilisateur) existaient déjà dans le schema Phase 1
+
+### Phase 5c — Paramètres système, journal d'activité, sidebar rôles (100%) ✅
+
+#### `/admin/parametres` (Super Admin)
+- ✅ Onglet Entreprise : nom, adresse, téléphone, email, NINEA, logo URL → PDF factures
+- ✅ Onglet PayDunya : mode TEST/PRODUCTION avec confirmation, masquage des clés API
+- ✅ Onglet Modèles PDF : couleur d'accent (color picker + aperçu live), footer, conditions générales
+- ✅ Onglet Sauvegardes : info Supabase auto, sauvegarde manuelle, informations système
+
+#### `/admin/journal` (Super Admin)
+- ✅ Table chronologique de toutes les actions admin (50 par page, pagination)
+- ✅ Filtres : par utilisateur, par type d'action
+- ✅ Badges colorés par type d'action + rôle utilisateur
+
+#### Logging `lib/journal.ts`
+- ✅ Helper `logAction()` silencieux (ne bloque jamais l'action principale)
+- ✅ Loggé : PRODUIT_CREE, COMMANDE_STATUT_CHANGE, COMMISSION_PAYEE, UTILISATEUR_CREE, UTILISATEUR_TOGGLE, PARAMETRES_MODIFIES
+
+#### Sidebar dynamique par rôle
+- ✅ VENDEUR : Tableau de bord, Produits, Commandes, Devis, Clients, Contenu site, Mes commissions
+- ✅ ADMIN : + Commissions, Comptabilité, Promotions, Zones livraison
+- ✅ SUPER_ADMIN : + Équipe, Paramètres, Journal activité
+- ✅ Badge Shield pour Super Admin dans le footer sidebar
+- ✅ Middleware mis à jour : /admin/journal → Super Admin uniquement
+
+#### APIs créées
+- ✅ `GET/PUT /api/admin/parametres` — lecture + upsert bulk
+- ✅ `GET /api/admin/journal` — filtres utilisateur/action + pagination
+
+#### Build
+- ✅ `npm run build` — 0 erreur
+- ✅ `npx tsc --noEmit` — 0 erreur TypeScript
 
 ## Prochaine étape : Phase 6 — Tests, optimisation PageSpeed 80+, mise en production teralite.sn
 

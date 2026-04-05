@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { Role } from '@prisma/client'
+import { logAction } from '@/lib/journal'
 
 const schemaCreate = z.object({
   nom: z.string().min(2).max(100),
@@ -75,6 +76,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
+    await logAction(session.user.id, 'UTILISATEUR_CREE', { nom: data.nom, email: data.email, role: data.role })
     return NextResponse.json(utilisateur, { status: 201 })
   } catch (err) {
     if (err instanceof z.ZodError) {

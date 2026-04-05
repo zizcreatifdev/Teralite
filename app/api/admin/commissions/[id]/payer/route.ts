@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { logAction } from '@/lib/journal'
 
 const schema = z.object({
   montant: z.number().int().positive().optional(), // ajustement possible
@@ -41,6 +42,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         vendeur: { select: { id: true, nom: true, email: true } },
         commande: { select: { numero: true, montantTotal: true } },
       },
+    })
+
+    await logAction(session.user.id, 'COMMISSION_PAYEE', {
+      commissionId: params.id,
+      vendeurId: commission.vendeurId,
+      montant: updated.montant,
+      note: data.note,
     })
 
     return NextResponse.json(updated)

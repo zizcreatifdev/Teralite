@@ -7,7 +7,7 @@ export default withAuth(
     const pathname = req.nextUrl.pathname
 
     // Routes Super Admin uniquement
-    const superAdminRoutes = ['/admin/utilisateurs', '/admin/parametres']
+    const superAdminRoutes = ['/admin/utilisateurs', '/admin/parametres', '/admin/journal']
     if (superAdminRoutes.some((r) => pathname.startsWith(r))) {
       if (token?.role !== 'SUPER_ADMIN') {
         return NextResponse.redirect(new URL('/admin?error=unauthorized', req.url))

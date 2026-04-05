@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 import { StatutCommande } from '@prisma/client'
+import { logAction } from '@/lib/journal'
 
 const schema = z.object({
   statut: z.nativeEnum(StatutCommande),
@@ -66,6 +67,13 @@ export async function PUT(
     })
 
     const updated = await prisma.commande.findUnique({ where: { id: params.id } })
+
+    await logAction(session.user.id, 'COMMANDE_STATUT_CHANGE', {
+      commandeId: params.id,
+      ancienStatut: commande.statut,
+      nouveauStatut: statut,
+    })
+
     return NextResponse.json(updated)
   } catch (err) {
     if (err instanceof z.ZodError) {
