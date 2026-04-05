@@ -1,8 +1,8 @@
 # PROJECT_STATE.md
 
-## Phase actuelle : 4b — Dashboard admin complet ✅ COMPLÉTÉE
+## Phase actuelle : 5a — Comptabilité ✅ COMPLÉTÉE
 
-## Dernière action : Phase 4b complétée le 2026-04-05
+## Dernière action : Phase 5a complétée le 2026-04-05
 
 ## Ce qui est fait
 
@@ -189,7 +189,46 @@
 - ✅ `npm run build` — 0 erreur
 - ✅ `npx tsc --noEmit` — 0 erreur TypeScript
 
-## Prochaine étape : Phase 5 — Comptabilité & commissions vendeurs + exports PDF/Excel
+### Phase 5a — Comptabilité & finances (100%) ✅
+
+#### `/admin/comptabilite`
+- ✅ Sélecteur période : ce mois / mois dernier / trimestre / année / personnalisé
+- ✅ 4 KPIs : CA, Dépenses, Bénéfice net, Marge %
+- ✅ Graphique linéaire évolution 12 mois (Recettes / Dépenses / Bénéfice)
+- ✅ Graphique barres Recettes vs Dépenses par mois
+- ✅ Donut répartition dépenses par catégorie
+- ✅ Onglet Recettes — table filtrée par mode paiement, total automatique
+- ✅ Onglet Dépenses — CRUD manuel (catégorie/description/montant/date/justificatif URL), suppression
+- ✅ Onglet Journal financier — chronologique avec solde cumulé, filtre recette/dépense
+- ✅ Onglet Factures — liste avec PDF download individuel
+- ✅ Export Excel (xlsx) toutes opérations de la période
+
+#### Packages ajoutés
+- ✅ `@react-pdf/renderer@4.3.3` — PDF factures branded
+- ✅ `xlsx@0.18.5` — export Excel journal financier
+
+#### `components/pdf/FacturePDF.tsx`
+- ✅ Template PDF branded Teralite : logo texte, numéro FAC-YYYY-NNN, données entreprise depuis Parametres
+- ✅ Tableau lignes (désignation, qté, prix unit., remise%, total HT)
+- ✅ Totaux HT / TVA / TTC avec bloc bleu Teralite pour TTC
+- ✅ Conditions de paiement, footer avec pagination
+- ✅ Compatible commandes (lignes produits) et devis (lignes devis)
+
+#### APIs créées
+- ✅ `GET /api/admin/comptabilite/resume` — KPIs + évolution 12 mois + répartition dépenses
+- ✅ `GET /api/admin/comptabilite/recettes` — liste filtrée par période + mode paiement
+- ✅ `GET/POST /api/admin/comptabilite/depenses` — liste + création
+- ✅ `PUT/DELETE /api/admin/comptabilite/depenses/[id]`
+- ✅ `GET /api/admin/comptabilite/journal` — journal chronologique avec solde cumulé
+- ✅ `GET /api/admin/comptabilite/export` — export XLSX du journal
+- ✅ `GET /api/admin/factures` — liste toutes factures avec client et origine
+- ✅ `GET /api/admin/factures/[id]/pdf` — PDF branded via @react-pdf/renderer
+
+#### Build
+- ✅ `npm run build` — 0 erreur
+- ✅ `npx tsc --noEmit` — 0 erreur TypeScript
+
+## Prochaine étape : Phase 5b — Commissions vendeurs + paramètres entreprise
 
 ## Variables d'environnement : Configurées sur Vercel ✅
 ## URL de déploiement : https://teralite.vercel.app
