@@ -6,6 +6,11 @@ export default withAuth(
     const token = req.nextauth.token
     const pathname = req.nextUrl.pathname
 
+    // Redirection première connexion : forcer le changement de mot de passe
+    if (token?.premiereConnexion && pathname !== '/admin/changer-mot-de-passe') {
+      return NextResponse.redirect(new URL('/admin/changer-mot-de-passe', req.url))
+    }
+
     // Routes Super Admin uniquement
     const superAdminRoutes = ['/admin/utilisateurs', '/admin/parametres', '/admin/journal']
     if (superAdminRoutes.some((r) => pathname.startsWith(r))) {

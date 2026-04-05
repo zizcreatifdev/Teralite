@@ -77,14 +77,15 @@ enum TypePromo {
 // ==================== MODELS ====================
 
 model Utilisateur {
-  id            String    @id @default(cuid())
-  nom           String
-  email         String    @unique
-  motDePasse    String    // bcrypt hash
-  role          Role      @default(VENDEUR)
-  actif         Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  nom               String
+  email             String    @unique
+  motDePasse        String    // bcrypt hash
+  role              Role      @default(VENDEUR)
+  actif             Boolean   @default(true)
+  premiereConnexion Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   commissions     Commission[]
   commandes       Commande[]        @relation("VendeurCommande")

@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const passwordChanged = searchParams.get('changed') === 'true'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -53,6 +55,15 @@ export default function LoginPage() {
           onSubmit={handleSubmit}
           className="bg-white rounded-2xl shadow-xl p-8"
         >
+          {passwordChanged && (
+            <div className="bg-green-light border border-green-teralite/30 rounded-xl px-4 py-3 mb-5 flex items-start gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-teralite mt-1.5 flex-shrink-0" />
+              <p className="text-sm text-green-teralite">
+                Mot de passe mis à jour. Connectez-vous avec vos nouveaux identifiants.
+              </p>
+            </div>
+          )}
+
           {error && (
             <div className="bg-red-light border border-red-teralite/30 rounded-xl px-4 py-3 mb-5 flex items-start gap-2">
               <div className="w-2 h-2 rounded-full bg-red-teralite mt-1.5 flex-shrink-0" />
@@ -119,5 +130,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   )
 }

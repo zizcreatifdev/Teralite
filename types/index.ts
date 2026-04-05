@@ -32,12 +32,14 @@ declare module 'next-auth' {
       email?: string | null
       image?: string | null
       role: string
+      premiereConnexion: boolean
     }
   }
 
   interface User {
     id: string
     role: string
+    premiereConnexion: boolean
   }
 }
 
@@ -45,6 +47,7 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id: string
     role: string
+    premiereConnexion: boolean
   }
 }
 

@@ -4,7 +4,17 @@
 
 ## Statut global : 🟢 PRÊT POUR PRODUCTION
 
-## Dernière action : Fix 404 Vercel — site en ligne le 2026-04-05
+## Dernière action : feat première connexion obligatoire — 2026-04-05
+
+### Post-prod : Première connexion obligatoire ✅
+- ✅ `premiereConnexion Boolean @default(true)` sur modèle `Utilisateur`
+- ✅ `lib/auth.ts` : `premiereConnexion` inclus dans le JWT token
+- ✅ `middleware.ts` : redirection vers `/admin/changer-mot-de-passe` si `premiereConnexion=true`
+- ✅ `app/(admin)/admin/changer-mot-de-passe/page.tsx` — page dédiée (même style que login)
+- ✅ `PATCH /api/admin/utilisateurs/changer-mot-de-passe` — update mot de passe + `premiereConnexion=false`, puis signOut
+- ✅ Page login : banner vert « Mot de passe mis à jour » après `?changed=true`
+- ✅ Migration SQL : `ALTER TABLE "Utilisateur" ADD COLUMN "premiereConnexion" BOOLEAN NOT NULL DEFAULT TRUE`
+- ✅ Build : 0 erreur · tsc : 0 erreur TypeScript
 
 ## Ce qui est fait
 
