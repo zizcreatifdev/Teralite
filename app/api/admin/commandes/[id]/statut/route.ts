@@ -30,34 +30,42 @@ export async function PUT(
   if (!session) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
   try {
-    const body = await request.json()
+    const body = await request.json() as unknown
     const { statut, note } = schema.parse(body)
 
     const commande = await prisma.commande.findUnique({ where: { id: params.id } })
     if (!commande) return NextResponse.json({ error: 'Commande introuvable' }, { status: 404 })
 
-    const statutsAutorisés = TRANSITIONS[commande.statut]
-    if (!statutsAutorisés.includes(statut)) {
+    const statutsAutorises = TRANSITIONS[commande.statut]
+    if (!statutsAutorises.includes(statut)) {
       return NextResponse.json(
         { error: `Transition ${commande.statut} → ${statut} non autorisée` },
         { status: 422 }
       )
     }
 
-    const [updated] = await prisma.$transaction([
-      prisma.commande.update({
+    await prisma.$transaction(async (tx) => {
+      await tx.commande.update({
         where: { id: params.id },
         data: { statut },
-      }),
-      prisma.historiqueStatut.create({
+      })
+      await tx.historiqueStatut.create({
         data: {
           commandeId: params.id,
           statut,
           note: note ?? `Statut mis à jour par ${session.user.name ?? 'admin'}`,
         },
-      }),
-    ])
+      })
+      // Annuler la commission en attente si commande annulée
+      if (statut === 'ANNULEE') {
+        await tx.commission.updateMany({
+          where: { commandeId: params.id, statut: 'EN_ATTENTE' },
+          data: { statut: 'ANNULEE' },
+        })
+      }
+    })
 
+    const updated = await prisma.commande.findUnique({ where: { id: params.id } })
     return NextResponse.json(updated)
   } catch (err) {
     if (err instanceof z.ZodError) {

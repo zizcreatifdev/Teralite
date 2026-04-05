@@ -1,8 +1,8 @@
 # PROJECT_STATE.md
 
-## Phase actuelle : 5a — Comptabilité ✅ COMPLÉTÉE
+## Phase actuelle : 5b — Commissions & équipe ✅ COMPLÉTÉE
 
-## Dernière action : Phase 5a complétée le 2026-04-05
+## Dernière action : Phase 5b complétée le 2026-04-05
 
 ## Ce qui est fait
 
@@ -228,7 +228,51 @@
 - ✅ `npm run build` — 0 erreur
 - ✅ `npx tsc --noEmit` — 0 erreur TypeScript
 
-## Prochaine étape : Phase 5b — Commissions vendeurs + paramètres entreprise
+### Phase 5b — Commissions vendeurs & gestion équipe (100%) ✅
+
+#### `/admin/commissions` (Admin + Super Admin)
+- ✅ Section config : taux % et/ou montant fixe par commande, date d'effet, formulaire inline
+- ✅ Sélecteur période (mois/année) + filtre par vendeur
+- ✅ Récapitulatif par vendeur : nb ventes, CA généré, commission calculée, statuts badges
+- ✅ Expand/collapse détail des commissions par commande
+- ✅ Bouton "Payer" par vendeur → Modal avec ajustement montant + note de paiement
+- ✅ Paiement bulk de toutes les commissions EN_ATTENTE/VALIDEE d'un vendeur
+
+#### `/admin/commissions/vendeur` (Vendeur connecté — ses données uniquement)
+- ✅ 4 KPIs : Mes ventes / CA généré / Commission du mois / En attente
+- ✅ Table commissions du mois avec statuts
+- ✅ Historique des paiements reçus avec notes
+- ✅ Chargement dynamique par période (sélecteur mois/année)
+- ✅ Aucune donnée des autres vendeurs ou finances globales
+
+#### `/admin/utilisateurs` (Super Admin uniquement)
+- ✅ Liste comptes groupés par rôle : Super Admin / Admin / Vendeur
+- ✅ Formulaire création : nom, email, rôle (Admin/Vendeur), mot de passe (bcrypt)
+- ✅ Toggle actif/inactif avec protection Super Admin (impossible à désactiver)
+- ✅ Badges rôle colorés, compteur de commissions
+
+#### Calcul & annulation automatique
+- ✅ Webhook PayDunya (déjà en place) crée la commission lors de CONFIRMEE
+- ✅ Route statut commande mise à jour : ANNULEE → annule commissions EN_ATTENTE liées
+- ✅ Middleware mis à jour : `/admin/commissions/vendeur` accessible aux VENDEUR
+
+#### APIs créées
+- ✅ `GET /api/admin/commissions` — résumé par vendeur, regroupé
+- ✅ `GET /api/admin/commissions/vendeur` — données propres au vendeur connecté
+- ✅ `PUT /api/admin/commissions/[id]/payer` — marquer payé avec ajustement + note
+- ✅ `GET/PUT /api/admin/commissions/config` — config taux + historique
+- ✅ `GET/POST /api/admin/utilisateurs` — liste + création (bcrypt, validation rôle)
+- ✅ `PUT /api/admin/utilisateurs/[id]` — modification
+- ✅ `PUT /api/admin/utilisateurs/[id]/toggle` — activer/désactiver (protège SUPER_ADMIN)
+
+#### Build
+- ✅ `npm run build` — 0 erreur
+- ✅ `npx tsc --noEmit` — 0 erreur TypeScript
+
+#### Migration SQL
+- ✅ Aucune migration nécessaire — tous les modèles (Commission, ConfigCommission, Utilisateur) existaient déjà dans le schema Phase 1
+
+## Prochaine étape : Phase 6 — Tests, optimisation PageSpeed 80+, mise en production teralite.sn
 
 ## Variables d'environnement : Configurées sur Vercel ✅
 ## URL de déploiement : https://teralite.vercel.app

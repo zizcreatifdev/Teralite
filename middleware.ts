@@ -14,6 +14,14 @@ export default withAuth(
       }
     }
 
+    // Vue vendeur : accessible aux vendeurs (leurs propres commissions uniquement)
+    if (pathname.startsWith('/admin/commissions/vendeur')) {
+      if (!['SUPER_ADMIN', 'ADMIN', 'VENDEUR'].includes(token?.role as string)) {
+        return NextResponse.redirect(new URL('/admin?error=unauthorized', req.url))
+      }
+      return NextResponse.next()
+    }
+
     // Routes Admin + Super Admin uniquement
     const adminOnlyRoutes = ['/admin/comptabilite', '/admin/commissions', '/admin/promotions']
     if (adminOnlyRoutes.some((r) => pathname.startsWith(r))) {
