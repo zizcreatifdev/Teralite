@@ -1,8 +1,8 @@
 # PROJECT_STATE.md
 
-## Phase actuelle : 3 — E-commerce ✅ COMPLÉTÉE
+## Phase actuelle : 4b — Dashboard admin complet ✅ COMPLÉTÉE
 
-## Dernière action : Phase 3 complétée le 2026-04-05
+## Dernière action : Phase 4b complétée le 2026-04-05
 
 ## Ce qui est fait
 
@@ -138,11 +138,58 @@
 - ✅ `npm run build` — 42 routes générées, 0 erreur
 - ✅ `npx tsc --noEmit` — 0 erreur TypeScript
 
-## Prochaine étape : Phase 4b — Devis, clients, CMS, promotions
-- `/admin/devis` — liste + fiche + changement statut
-- `/admin/clients` — liste + fiche client
-- `/admin/contenu` — CMS (ContenuSite, témoignages, FAQ)
-- `/admin/promotions` — gestion codes promo
+### Phase 4b — Dashboard admin complet (100%) ✅
+
+#### Devis `/admin/devis`
+- ✅ Liste avec filtres statut, badges NOUVEAU (orange)/EN_COURS/ENVOYE/ACCEPTE/REFUSE
+- ✅ `/admin/devis/nouveau` — création avec sélection client existant ou nouveau + éditeur lignes
+- ✅ `/admin/devis/[id]` — fiche interactive : éditeur lignes inline (désignation, produit, qté, prix, remise%, TVA)
+- ✅ Calcul automatique : sousTotal = round(q × pu × (1 - remise/100)), totaux HT/TVA/TTC
+- ✅ Changement statut avec transitions validées (NOUVEAU→EN_COURS/ENVOYE/REFUSE, etc.)
+- ✅ Génération PDF — HTML + print styles, `window.open`, sans nouveau package
+- ✅ Convertir en facture (POST `/convertir`) — génère FAC-YYYY-NNN, calcule montantHT/TVA/TTC
+
+#### Clients `/admin/clients`
+- ✅ Liste avec filtres type (PARTICULIER/ENTREPRISE/MUNICIPALITE), recherche, CSV export
+- ✅ `/admin/clients/[id]` — fiche éditable : infos, notes, historique commandes + devis, total dépensé
+
+#### CMS `/admin/contenu`
+- ✅ `ContenuEditor` — 3 onglets : Général (hero, à propos, contact), Témoignages (CRUD + toggle + reorder), FAQ (CRUD par catégorie)
+- ✅ Sauvegarde bulk via PUT `/api/admin/contenu` avec `{ cles: Record<string, string> }`
+- ✅ Réordonnancement témoignages par boutons ↑↓ (swap ordre)
+
+#### Promotions `/admin/promotions`
+- ✅ Bannière promotionnelle : toggle actif/inactif, texte, couleur (color picker), aperçu live
+- ✅ Codes promo : table CRUD (code, type, valeur, expiration, usages/max), toggle actif
+
+#### Zones de livraison `/admin/parametres/zones`
+- ✅ `ZonesManager` — table CRUD inline : nom, tarif FCFA, délai jours, toggle actif
+- ✅ Protection suppression : alerte si zone liée à des commandes (409 depuis API)
+
+#### APIs créées
+- ✅ `GET/POST /api/admin/devis`
+- ✅ `GET/PUT /api/admin/devis/[id]`
+- ✅ `PUT /api/admin/devis/[id]/statut` — transitions validées
+- ✅ `GET /api/admin/devis/[id]/pdf` — HTML imprimable
+- ✅ `POST /api/admin/devis/[id]/convertir` — devis → facture
+- ✅ `GET/POST /api/admin/clients`
+- ✅ `GET/PUT /api/admin/clients/[id]`
+- ✅ `GET /api/admin/clients/export` — CSV
+- ✅ `GET/PUT /api/admin/contenu`
+- ✅ `POST /api/admin/temoignages`
+- ✅ `PUT/DELETE /api/admin/temoignages/[id]`
+- ✅ `POST /api/admin/faq`
+- ✅ `PUT/DELETE /api/admin/faq/[id]`
+- ✅ `GET/POST /api/admin/promotions`
+- ✅ `PUT/DELETE /api/admin/promotions/[id]`
+- ✅ `GET/POST /api/admin/zones`
+- ✅ `PUT/DELETE /api/admin/zones/[id]`
+
+#### Build
+- ✅ `npm run build` — 0 erreur
+- ✅ `npx tsc --noEmit` — 0 erreur TypeScript
+
+## Prochaine étape : Phase 5 — Comptabilité & commissions vendeurs + exports PDF/Excel
 
 ## Variables d'environnement : Configurées sur Vercel ✅
 ## URL de déploiement : https://teralite.vercel.app
