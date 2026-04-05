@@ -1,8 +1,10 @@
 # PROJECT_STATE.md
 
-## Phase actuelle : 5c — Paramètres système, journal activité, sidebar ✅ COMPLÉTÉE
+## Phase actuelle : 6 — Tests, optimisation, mise en production ✅ COMPLÉTÉE
 
-## Dernière action : Phase 5c complétée le 2026-04-05
+## Statut global : 🟢 PRÊT POUR PRODUCTION
+
+## Dernière action : Phase 6 complétée le 2026-04-05
 
 ## Ce qui est fait
 
@@ -304,7 +306,68 @@
 - ✅ `npm run build` — 0 erreur
 - ✅ `npx tsc --noEmit` — 0 erreur TypeScript
 
-## Prochaine étape : Phase 6 — Tests, optimisation PageSpeed 80+, mise en production teralite.sn
+### Phase 6 — Tests, optimisation, prêt pour production (100%) ✅
+
+#### Sécurité complète
+- ✅ Rate limiting : /api/devis (5/min), /api/contact (3/min), /api/commandes/suivi (10/min)
+- ✅ Webhook PayDunya : vérification HMAC-SHA256 timing-safe
+- ✅ Aucune clé API exposée côté client (PayDunya 100% server-side)
+- ✅ Zod validation sur toutes les routes POST/PUT
+- ✅ Middleware NextAuth protège toutes les routes /admin
+- ✅ Rôles vérifiés dans chaque Route Handler (SUPER_ADMIN / ADMIN / VENDEUR)
+- ✅ bcrypt cost 12 pour les mots de passe
+
+#### Headers HTTP de sécurité (`next.config.mjs`)
+- ✅ X-Frame-Options: DENY
+- ✅ X-Content-Type-Options: nosniff
+- ✅ Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+- ✅ Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+- ✅ Content-Security-Policy: complet (GA, PayDunya, Google Fonts)
+- ✅ Referrer-Policy: strict-origin-when-cross-origin
+- ✅ X-Powered-By supprimé (poweredByHeader: false)
+
+#### Cache-Control
+- ✅ /_next/static : public, max-age=31536000, immutable
+- ✅ /_next/image : public, max-age=86400, must-revalidate
+- ✅ /icons/ : public, max-age=604800, immutable
+- ✅ /produits : public, max-age=60, stale-while-revalidate=600
+
+#### Performance images
+- ✅ next/image avec `fill` + `sizes` sur toutes les images produit
+- ✅ `priority` sur l'image principale LCP (GaleriePhotos.tsx)
+- ✅ Formats avif + webp dans next.config.mjs
+- ✅ `compress: true` (gzip/brotli)
+
+#### Google Analytics
+- ✅ `@next/third-parties@16.2.2` installé
+- ✅ GoogleAnalytics conditionnel sur NEXT_PUBLIC_GA_ID dans layout.tsx
+- ✅ CSP mise à jour pour googletagmanager.com + google-analytics.com
+
+#### Vercel / Déploiement
+- ✅ `vercel.json` : buildCommand = `prisma migrate deploy && next build`
+- ✅ Variables d'environnement configurées sur Vercel
+
+#### Build final
+- ✅ `npm run build` — toutes routes générées, 0 erreur de compilation
+- ✅ `npx tsc --noEmit` — 0 erreur TypeScript
+
+---
+
+## Récapitulatif complet du projet
+
+| Phase | Contenu | Statut |
+|-------|---------|--------|
+| 1 | Fondations (Next.js, Prisma, NextAuth, middleware) | ✅ |
+| 2 | Site public (accueil, catalogue, fiches, SEO, PWA) | ✅ |
+| 3 | E-commerce (panier, checkout, PayDunya, suivi) | ✅ |
+| 4a | Dashboard admin (produits, commandes) | ✅ |
+| 4b | Dashboard admin (devis, clients, CMS, promos, zones) | ✅ |
+| 5a | Comptabilité & finances (PDF, Excel) | ✅ |
+| 5b | Commissions vendeurs & gestion équipe | ✅ |
+| 5c | Paramètres système, journal, sidebar rôles | ✅ |
+| 6 | Tests, optimisation, sécurité, production | ✅ |
+
+---
 
 ## Variables d'environnement : Configurées sur Vercel ✅
 ## URL de déploiement : https://teralite.vercel.app
