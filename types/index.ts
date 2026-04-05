@@ -77,3 +77,9 @@ export const TYPE_PAIEMENT_LABELS: Record<TypePaiement, string> = {
   YAS: 'YAS',
   CASH: 'Paiement à la livraison',
 }
+
+// Spécification technique produit
+export interface Spec {
+  label: string
+  valeur: string
+}

@@ -90,12 +90,59 @@
 - ✅ `npm run build` — 27 routes générées, 0 erreur
 - ✅ `npx tsc --noEmit` — 0 erreur TypeScript
 
-## Prochaine étape : Phase 4 — Dashboard admin opérationnel
-- CRUD produits (liste, création, édition, archivage)
-- Gestion commandes (liste, détail, changement de statut, historique)
-- Gestion devis (liste, conversion en commande)
-- Gestion clients (liste, fiche client)
-- CMS basique (contenu site, témoignages, FAQ, paramètres)
+### Phase 4a — Dashboard admin (100%) ✅
+
+#### Dashboard `/admin`
+- ✅ KPIs temps réel : commandes du mois, CA du jour, devis en attente, nouveaux clients
+- ✅ Alertes : devis non traités +48h (orange), produits stock critique (rouge)
+- ✅ `DashboardCharts` (recharts) : graphique ventes 7j/30j/3 mois (LineChart) + répartition paiements (PieChart donut)
+- ✅ Tableaux : 5 dernières commandes + 4 derniers devis avec badges statut
+
+#### Produits `/admin/produits`
+- ✅ Liste avec photo miniature, référence, prix, stock, statut, vedette, badges
+- ✅ Badge stock critique (rouge) si stock ≤ seuilAlerte
+- ✅ Filtres : catégorie, statut, recherche texte, archivés
+- ✅ Pagination 20/page
+- ✅ `ArchiveBtnClient` — archive via FETCH (jamais de suppression)
+- ✅ `/admin/produits/nouveau` + `/admin/produits/[id]/modifier`
+- ✅ `ProduitForm` — formulaire complet : nom, ref, catégorie, descriptions, specs, prix, stock, statut, vedette
+- ✅ Upload jusqu'à 5 photos : sélection photo principale, preview, suppression
+
+#### Commandes `/admin/commandes`
+- ✅ Liste avec filtres : statut, mode paiement, date début/fin, recherche
+- ✅ Badges statut colorés selon design-system
+- ✅ Pagination
+
+#### Fiche commande `/admin/commandes/[id]`
+- ✅ `CommandeDetail` — composant client interactif
+- ✅ Détail produits commandés + totaux (sous-total, livraison, total)
+- ✅ Changement de statut avec workflow autorisé (RECUE→CONFIRMEE→EN_PREPARATION→EXPEDIEE→LIVREE)
+- ✅ Notes internes (sauvegarde AJAX)
+- ✅ Bouton "Générer facture" → crée Facture en DB (PDF Phase 5)
+- ✅ Bouton "Export Excel" → téléchargement CSV
+- ✅ Bouton WhatsApp client
+- ✅ Historique des statuts avec timeline
+
+#### APIs créées
+- ✅ `GET/POST /api/admin/produits`
+- ✅ `GET/PUT /api/admin/produits/[id]`
+- ✅ `PUT /api/admin/produits/[id]/archiver`
+- ✅ `GET /api/admin/commandes`
+- ✅ `GET/PUT /api/admin/commandes/[id]`
+- ✅ `PUT /api/admin/commandes/[id]/statut` — transitions validées
+- ✅ `POST /api/admin/commandes/[id]/facture` — crée enregistrement Facture
+- ✅ `GET /api/admin/commandes/[id]/export` — export CSV
+- ✅ `POST /api/admin/upload` — upload JPEG/PNG/WebP max 5MB
+
+#### Build
+- ✅ `npm run build` — 42 routes générées, 0 erreur
+- ✅ `npx tsc --noEmit` — 0 erreur TypeScript
+
+## Prochaine étape : Phase 4b — Devis, clients, CMS, promotions
+- `/admin/devis` — liste + fiche + changement statut
+- `/admin/clients` — liste + fiche client
+- `/admin/contenu` — CMS (ContenuSite, témoignages, FAQ)
+- `/admin/promotions` — gestion codes promo
 
 ## Variables d'environnement : Configurées sur Vercel ✅
 ## URL de déploiement : https://teralite.vercel.app
