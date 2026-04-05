@@ -83,6 +83,10 @@ export default function Sidebar() {
   const { data: session } = useSession()
   const role = (session?.user?.role ?? 'VENDEUR') as Role
 
+  // Pas de sidebar sur les pages d'authentification
+  const authPages = ['/admin/login', '/admin/changer-mot-de-passe']
+  if (authPages.includes(pathname)) return null
+
   const isActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin'
     // Éviter que /admin/commissions soit actif quand on est sur /admin/commissions/vendeur
