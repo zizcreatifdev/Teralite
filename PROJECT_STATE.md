@@ -4,7 +4,7 @@
 
 ## Statut global : 🟢 PRÊT POUR PRODUCTION
 
-## Dernière action : Phase 6 complétée le 2026-04-05
+## Dernière action : Fix 404 Vercel — site en ligne le 2026-04-05
 
 ## Ce qui est fait
 
@@ -344,7 +344,7 @@
 - ✅ CSP mise à jour pour googletagmanager.com + google-analytics.com
 
 #### Vercel / Déploiement
-- ✅ `vercel.json` : buildCommand = `prisma migrate deploy && next build`
+- ✅ `vercel.json` : `framework: nextjs` + buildCommand = `prisma generate && next build`
 - ✅ Variables d'environnement configurées sur Vercel
 
 #### Build final
