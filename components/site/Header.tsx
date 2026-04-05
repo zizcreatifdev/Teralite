@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ShoppingCart, Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { useCart } from '@/app/context/CartContext'
 
 const navLinks = [
   { href: '/produits', label: 'Produits' },
@@ -15,6 +16,7 @@ const navLinks = [
 export default function Header() {
   const pathname = usePathname()
   const [menuOuvert, setMenuOuvert] = useState(false)
+  const { count } = useCart()
 
   return (
     <header className="bg-white border-b border-border-main sticky top-0 z-50 shadow-sm">
@@ -43,17 +45,25 @@ export default function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          {/* Icône panier avec compteur */}
           <Link
             href="/panier"
             className="relative w-9 h-9 flex items-center justify-center text-text-mid hover:text-blue-teralite transition-colors"
+            aria-label={`Panier — ${count} article${count > 1 ? 's' : ''}`}
           >
             <ShoppingCart className="w-5 h-5" />
+            {count > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-orange-teralite text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                {count > 9 ? '9+' : count}
+              </span>
+            )}
           </Link>
+
           <Link
             href="/devis"
             className="hidden md:flex bg-orange-teralite text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-orange-dark transition-colors"
           >
-            Demande de devis
+            Devis gratuit
           </Link>
 
           {/* Bouton menu mobile */}
@@ -90,7 +100,7 @@ export default function Header() {
               onClick={() => setMenuOuvert(false)}
               className="bg-orange-teralite text-white text-sm font-medium px-4 py-2.5 rounded-lg hover:bg-orange-dark transition-colors text-center mt-2"
             >
-              Demande de devis
+              Devis gratuit
             </Link>
           </nav>
         </div>

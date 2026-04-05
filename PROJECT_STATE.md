@@ -1,8 +1,8 @@
 # PROJECT_STATE.md
 
-## Phase actuelle : 2 — Site public vitrine ✅ COMPLÉTÉE
+## Phase actuelle : 3 — E-commerce ✅ COMPLÉTÉE
 
-## Dernière action : Phase 2 complétée le 2026-04-01
+## Dernière action : Phase 3 complétée le 2026-04-05
 
 ## Ce qui est fait
 
@@ -54,12 +54,48 @@
 - ✅ `npm run build` — 19 routes générées, 0 erreur
 - ✅ `npx tsc --noEmit` — 0 erreur TypeScript
 
-## Prochaine étape : Phase 3 — E-commerce
-- Panier (localStorage) + page /panier
-- Checkout : formulaire livraison + choix paiement
-- Intégration PayDunya (Orange Money, Wave, YAS)
-- Page de confirmation + suivi commande en temps réel
-- Webhook PayDunya + notifications WhatsApp
+### Phase 3 — E-commerce (100%) ✅
+
+#### Panier
+- ✅ `CartContext` — React Context + useReducer, persisté en localStorage (`teralite_cart`)
+- ✅ `/panier` — Affichage articles, sélecteur zone livraison, code promo, totaux, CTA checkout
+
+#### APIs nouvelles
+- ✅ `GET /api/zones` — Liste des zones de livraison actives avec frais
+- ✅ `POST /api/promo/valider` — Validation code promo (montant min, quota, dates)
+- ✅ `POST /api/paiement/initier` — Création commande atomique ($transaction) + initiation PayDunya
+- ✅ `POST /api/webhooks/paydunya` — Vérification HMAC-SHA256 + confirmation paiement + stock + commission
+- ✅ `GET /api/commandes/[id]` — Détail commande (champs admin exclus)
+
+#### Checkout
+- ✅ `/checkout` — Formulaire client (nom, tel, adresse) + mode paiement (OM/Wave/YAS/Cash) + récapitulatif
+- ✅ Redirection PayDunya pour paiements mobiles
+- ✅ Cash → statut `EN_ATTENTE_PAIEMENT`, redirect confirmation directe
+
+#### Confirmation & suivi
+- ✅ `/commandes/[id]/confirmation` — Banner statut, récapitulatif complet, historique, CTAs WhatsApp/suivi
+
+#### Libs créées
+- ✅ `lib/paydunya.ts` — Client PayDunya server-side (sandbox/production), `initierPaiement`, `verifierPaiement`
+- ✅ `lib/whatsapp.ts` — Notifications WhatsApp client + admin (graceful, non-bloquant)
+
+#### Sécurité
+- ✅ HMAC-SHA256 timing-safe sur webhook PayDunya
+- ✅ Idempotence webhook (skip si déjà CONFIRMEE)
+- ✅ Vérification montant ±10 FCFA
+- ✅ `$transaction` Prisma pour atomicité stock/commande/recette/commission
+- ✅ Middleware rôle SUPER_ADMIN / ADMIN étendu
+
+#### Build
+- ✅ `npm run build` — 27 routes générées, 0 erreur
+- ✅ `npx tsc --noEmit` — 0 erreur TypeScript
+
+## Prochaine étape : Phase 4 — Dashboard admin opérationnel
+- CRUD produits (liste, création, édition, archivage)
+- Gestion commandes (liste, détail, changement de statut, historique)
+- Gestion devis (liste, conversion en commande)
+- Gestion clients (liste, fiche client)
+- CMS basique (contenu site, témoignages, FAQ, paramètres)
 
 ## Variables d'environnement : Configurées sur Vercel ✅
 ## URL de déploiement : https://teralite.vercel.app

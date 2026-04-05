@@ -147,8 +147,10 @@ export default async function FicheProduitPage({
           <AjoutPanierSection
             produitId={produit.id}
             nom={produit.nom}
+            slug={produit.slug}
             prixPublic={produit.prixPublic}
             statut={produit.statut}
+            photoUrl={produit.photos[0]?.url ?? null}
           />
         </div>
       </div>

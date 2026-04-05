@@ -2,25 +2,47 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ShoppingCart, FileText, Minus, Plus } from 'lucide-react'
+import { ShoppingCart, FileText, Minus, Plus, Check } from 'lucide-react'
+import { useCart } from '@/app/context/CartContext'
 import type { TypeProduit } from '@prisma/client'
 
 interface AjoutPanierSectionProps {
   produitId: string
   nom: string
+  slug: string
   prixPublic: number | null
   statut: TypeProduit
+  photoUrl?: string | null
 }
 
 export default function AjoutPanierSection({
   produitId,
   nom,
+  slug,
   prixPublic,
   statut,
+  photoUrl,
 }: AjoutPanierSectionProps) {
   const [quantite, setQuantite] = useState(1)
+  const [ajoute, setAjoute] = useState(false)
+  const { ajouter } = useCart()
 
   const indisponible = statut === 'RUPTURE'
+
+  const handleAjouter = () => {
+    if (!prixPublic || indisponible) return
+    ajouter({
+      produitId,
+      slug,
+      nom,
+      categorie: '',
+      prixUnitaire: prixPublic,
+      photoUrl: photoUrl ?? null,
+      quantite,
+    })
+    setAjoute(true)
+    setTimeout(() => setAjoute(false), 2500)
+  }
 
   return (
     <div className="space-y-3">
@@ -37,9 +59,7 @@ export default function AjoutPanierSection({
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
-            <span className="w-10 text-center text-sm font-medium text-text-main">
-              {quantite}
-            </span>
+            <span className="w-10 text-center text-sm font-medium text-text-main">{quantite}</span>
             <button
               onClick={() => setQuantite(quantite + 1)}
               className="w-9 h-9 flex items-center justify-center text-text-mid hover:bg-gray-fond transition-colors"
@@ -53,13 +73,20 @@ export default function AjoutPanierSection({
       {/* Boutons actions */}
       <div className="flex flex-col gap-2">
         {prixPublic && !indisponible ? (
-          <Link
-            href={`/panier?ajout=${produitId}&qte=${quantite}`}
-            className="flex items-center justify-center gap-2 bg-blue-teralite hover:bg-blue-dark text-white text-sm font-medium py-3 rounded-lg transition-colors"
+          <button
+            onClick={handleAjouter}
+            className={`flex items-center justify-center gap-2 text-white text-sm font-medium py-3 rounded-lg transition-colors ${
+              ajoute
+                ? 'bg-green-teralite'
+                : 'bg-blue-teralite hover:bg-blue-dark'
+            }`}
           >
-            <ShoppingCart className="w-4 h-4" />
-            Ajouter au panier
-          </Link>
+            {ajoute ? (
+              <><Check className="w-4 h-4" /> Ajouté au panier !</>
+            ) : (
+              <><ShoppingCart className="w-4 h-4" /> Ajouter au panier</>
+            )}
+          </button>
         ) : statut === 'RUPTURE' ? (
           <div className="flex items-center justify-center gap-2 bg-gray-fond text-text-light text-sm font-medium py-3 rounded-lg cursor-not-allowed border border-border-main">
             Rupture de stock

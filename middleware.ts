@@ -6,10 +6,20 @@ export default withAuth(
     const token = req.nextauth.token
     const pathname = req.nextUrl.pathname
 
-    // Vérifie que l'utilisateur est connecté (withAuth s'en charge déjà)
-    // Ici on peut ajouter des vérifications de rôle supplémentaires si besoin
-    if (pathname.startsWith('/admin') && !token) {
-      return NextResponse.redirect(new URL('/admin/login', req.url))
+    // Routes Super Admin uniquement
+    const superAdminRoutes = ['/admin/utilisateurs', '/admin/parametres']
+    if (superAdminRoutes.some((r) => pathname.startsWith(r))) {
+      if (token?.role !== 'SUPER_ADMIN') {
+        return NextResponse.redirect(new URL('/admin?error=unauthorized', req.url))
+      }
+    }
+
+    // Routes Admin + Super Admin uniquement
+    const adminOnlyRoutes = ['/admin/comptabilite', '/admin/commissions', '/admin/promotions']
+    if (adminOnlyRoutes.some((r) => pathname.startsWith(r))) {
+      if (!['SUPER_ADMIN', 'ADMIN'].includes(token?.role as string)) {
+        return NextResponse.redirect(new URL('/admin?error=unauthorized', req.url))
+      }
     }
 
     return NextResponse.next()
@@ -20,8 +30,7 @@ export default withAuth(
         // La page login est toujours accessible
         if (req.nextUrl.pathname === '/admin/login') return true
         // Toutes les autres routes /admin/* nécessitent un token valide
-        if (req.nextUrl.pathname.startsWith('/admin')) return !!token
-        return true
+        return !!token
       },
     },
   }
