@@ -22,15 +22,15 @@ export default async function AProposPage() {
   const [presentation, mission, vision] = await Promise.all([
     getContenu(
       'apropos_presentation',
-      'Teralite est une entreprise sénégalaise spécialisée dans les solutions d\'éclairage LED professionnel. Fondée à Dakar, nous accompagnons les particuliers, les entreprises et les collectivités dans leur transition vers des solutions d\'éclairage économiques et durables.'
+      'Teralite propose des solutions d\'éclairage LED intelligentes avec détection automatique, adaptées aux réalités sénégalaises.\n\nNos produits s\'allument automatiquement à votre passage et s\'éteignent seuls, vous permettant d\'économiser jusqu\'à 70% sur votre facture d\'électricité. Simple. Efficace. Accessible.'
     ),
     getContenu(
       'apropos_mission',
-      'Notre mission est de rendre accessible à tous les Sénégalais des solutions d\'éclairage LED de qualité supérieure, à des prix abordables, avec un service client irréprochable.'
+      'Notre mission est de rendre accessible à tous les Sénégalais des solutions d\'éclairage LED intelligent de qualité supérieure, à des prix abordables, avec un service client irréprochable.'
     ),
     getContenu(
       'apropos_vision',
-      'Nous croyons qu\'un bon éclairage améliore la qualité de vie et la productivité. Notre vision est d\'être le partenaire de référence pour l\'éclairage LED au Sénégal et en Afrique de l\'Ouest.'
+      'Nous croyons qu\'un bon éclairage améliore la qualité de vie et la productivité. Notre vision est d\'être le partenaire de référence pour l\'éclairage LED intelligent au Sénégal et en Afrique de l\'Ouest.'
     ),
   ])
 

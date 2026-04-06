@@ -10,10 +10,10 @@ export const revalidate = 3600
 export const metadata: Metadata = {
   title: 'Teralite — La lumière qui pense pour vous',
   description:
-    "Teralite : solutions d'éclairage LED professionnel à Dakar, Sénégal. Ampoules, plafonniers, éclairage solaire et industriel. Économisez jusqu'à 50% sur votre facture d'électricité.",
+    "Teralite : solutions d'éclairage LED intelligent avec détection automatique à Dakar, Sénégal. Économisez jusqu'à 70% sur votre facture d'électricité.",
   openGraph: {
     title: 'Teralite — La lumière qui pense pour vous',
-    description: "Solutions d'éclairage LED professionnel à Dakar, Sénégal.",
+    description: "Solutions d'éclairage LED intelligent à Dakar, Sénégal.",
     type: 'website',
   },
 }
@@ -51,6 +51,11 @@ export default async function HomePage() {
 
   return (
     <>
+      {/* ── BANNIÈRE OFFRE LANCEMENT ── */}
+      <div className="bg-orange-teralite text-white text-center text-sm font-medium py-2.5 px-4">
+        🎉 Offre de lancement : -10% sur votre première commande + livraison gratuite Dakar (100 premiers clients)
+      </div>
+
       {/* ── HERO ── */}
       <section className="relative text-white py-16 md:py-24 px-4 overflow-hidden">
         {/* Image de fond */}
@@ -67,14 +72,14 @@ export default async function HomePage() {
         {/* Contenu */}
         <div className="relative max-w-5xl mx-auto text-center">
           <p className="text-orange-teralite text-xs font-semibold uppercase tracking-widest mb-4">
-            Éclairage LED Professionnel · Dakar, Sénégal
+            Éclairage LED Intelligent · Dakar, Sénégal
           </p>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight mb-6">
             La lumière qui pense pour vous
           </h1>
           <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-            Réduisez votre facture d&apos;électricité de 50% avec nos solutions LED certifiées.
-            Livraison à Dakar et dans les régions du Sénégal.
+            Réduisez votre facture d&apos;électricité jusqu&apos;à 70% grâce à nos solutions LED
+            intelligentes avec détection automatique. Simple. Efficace. Accessible.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
@@ -97,8 +102,8 @@ export default async function HomePage() {
       <section className="bg-blue-dark text-white py-8 px-4">
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[
-            { valeur: '-50%', label: 'Sur votre facture électrique' },
-            { valeur: '25 000h', label: 'Durée de vie garantie' },
+            { valeur: '-70%', label: 'Sur votre facture électrique' },
+            { valeur: '30 000h', label: 'Durée de vie selon modèle' },
             { valeur: 'IP65', label: 'Résistance aux intempéries' },
             { valeur: '3+', label: 'Moyens de paiement acceptés' },
           ].map((stat) => (
@@ -178,17 +183,17 @@ export default async function HomePage() {
               {
                 num: '01',
                 titre: 'Choisissez vos produits',
-                desc: 'Parcourez notre catalogue d\'éclairage LED. Filtrez par catégorie ou faites une demande de devis pour un projet sur mesure.',
+                desc: 'Parcourez notre catalogue d\'éclairage LED intelligent. Filtrez par catégorie ou faites une demande de devis pour un projet sur mesure.',
               },
               {
                 num: '02',
                 titre: 'Passez commande',
-                desc: 'Payez en toute sécurité via Orange Money, Wave, YAS ou à la livraison. Votre commande est confirmée instantanément.',
+                desc: 'Payez en toute sécurité via Orange Money, Wave ou à la livraison. Votre commande est confirmée instantanément.',
               },
               {
                 num: '03',
-                titre: 'Livraison à domicile',
-                desc: 'Nous livrons à Dakar et dans toutes les régions du Sénégal. Suivez votre commande en temps réel depuis notre site.',
+                titre: 'La lumière s\'adapte à vous',
+                desc: 'Nos LED intelligentes s\'allument à votre passage et s\'éteignent seules après 60 secondes à 2 minutes selon le modèle — aucune action requise.',
               },
             ].map((etape) => (
               <div key={etape.num} className="bg-white rounded-xl p-6 border border-border-main">
@@ -263,8 +268,7 @@ export default async function HomePage() {
             {[
               { label: 'Orange Money', color: 'bg-[#FF6600]' },
               { label: 'Wave', color: 'bg-[#1DC9DA]' },
-              { label: 'YAS', color: 'bg-[#00A651]' },
-              { label: 'Cash livraison', color: 'bg-gray-fond border border-border-main' },
+              { label: 'Espèces', color: 'bg-gray-fond border border-border-main' },
             ].map((p) => (
               <div key={p.label} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full ${p.color} flex items-center justify-center`}>
