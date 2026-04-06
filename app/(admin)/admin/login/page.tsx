@@ -1,12 +1,11 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useRef } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 
 function LoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const passwordChanged = searchParams.get('changed') === 'true'
   const [email, setEmail] = useState('')
@@ -14,9 +13,13 @@ function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  // Verrou anti double-clic : le premier clic pose le verrou immédiatement
+  const submitting = useRef(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (submitting.current) return
+    submitting.current = true
     setError('')
     setLoading(true)
 
@@ -29,10 +32,14 @@ function LoginForm() {
 
       if (result?.error) {
         setError('Email ou mot de passe incorrect.')
+        submitting.current = false
       } else {
-        router.push('/admin')
-        router.refresh()
+        // Rechargement complet : charge la session fraîche sans double fetch
+        window.location.href = '/admin'
       }
+    } catch {
+      setError('Erreur réseau. Veuillez réessayer.')
+      submitting.current = false
     } finally {
       setLoading(false)
     }
@@ -51,10 +58,7 @@ function LoginForm() {
         </div>
 
         {/* Formulaire */}
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-xl p-8"
-        >
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8">
           {passwordChanged && (
             <div className="bg-green-light border border-green-teralite/30 rounded-xl px-4 py-3 mb-5 flex items-start gap-2">
               <div className="w-2 h-2 rounded-full bg-green-teralite mt-1.5 flex-shrink-0" />
@@ -82,9 +86,10 @@ function LoginForm() {
               required
               autoComplete="email"
               placeholder="admin@teralite.sn"
+              disabled={loading}
               className="w-full border border-border-main rounded-lg px-3 py-2.5 text-sm text-text-main
                          focus:outline-none focus:ring-2 focus:ring-blue-teralite/30 focus:border-blue-teralite
-                         placeholder:text-text-light transition-colors"
+                         placeholder:text-text-light transition-colors disabled:opacity-60"
             />
           </div>
 
@@ -100,9 +105,10 @@ function LoginForm() {
                 required
                 autoComplete="current-password"
                 placeholder="••••••••"
+                disabled={loading}
                 className="w-full border border-border-main rounded-lg px-3 py-2.5 pr-10 text-sm text-text-main
                            focus:outline-none focus:ring-2 focus:ring-blue-teralite/30 focus:border-blue-teralite
-                           placeholder:text-text-light transition-colors"
+                           placeholder:text-text-light transition-colors disabled:opacity-60"
               />
               <button
                 type="button"
@@ -118,11 +124,17 @@ function LoginForm() {
             type="submit"
             disabled={loading}
             className="w-full bg-blue-teralite hover:bg-blue-dark text-white text-sm font-medium py-2.5 rounded-lg
-                       transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                       transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? 'Connexion en cours…' : 'Se connecter'}
           </button>
+
+          {loading && (
+            <p className="text-center text-xs text-text-light mt-3">
+              Première connexion plus lente — merci de patienter
+            </p>
+          )}
         </form>
 
         <p className="text-center text-white/40 text-xs mt-6">
