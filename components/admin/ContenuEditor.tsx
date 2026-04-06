@@ -13,7 +13,7 @@ interface Props {
   faq: FaqItem[]
 }
 
-type Tab = 'general' | 'temoignages' | 'faq'
+type Tab = 'general' | 'apropos' | 'temoignages' | 'faq'
 
 function val(contenu: ContenuEntry[], cle: string) {
   return contenu.find((c) => c.cle === cle)?.valeur ?? ''
@@ -27,7 +27,6 @@ export default function ContenuEditor({ contenu: initialContenu, temoignages: in
     hero_titre: val(initialContenu, 'hero_titre'),
     hero_sous_titre: val(initialContenu, 'hero_sous_titre'),
     hero_cta: val(initialContenu, 'hero_cta'),
-    apropos_texte: val(initialContenu, 'apropos_texte'),
     contact_telephone: val(initialContenu, 'contact_telephone'),
     contact_whatsapp: val(initialContenu, 'contact_whatsapp'),
     contact_adresse: val(initialContenu, 'contact_adresse'),
@@ -49,6 +48,48 @@ export default function ContenuEditor({ contenu: initialContenu, temoignages: in
       setTimeout(() => setSavedGeneral(false), 3000)
     } finally {
       setSavingGeneral(false)
+    }
+  }
+
+  // ——— À propos ———
+  const [clesApropos, setClesApropos] = useState<Record<string, string>>({
+    apropos_presentation: val(initialContenu, 'apropos_presentation'),
+    apropos_mission: val(initialContenu, 'apropos_mission'),
+    apropos_vision: val(initialContenu, 'apropos_vision'),
+    apropos_valeur1_emoji: val(initialContenu, 'apropos_valeur1_emoji') || '🔬',
+    apropos_valeur1_titre: val(initialContenu, 'apropos_valeur1_titre') || 'Qualité garantie',
+    apropos_valeur1_texte: val(initialContenu, 'apropos_valeur1_texte'),
+    apropos_valeur2_emoji: val(initialContenu, 'apropos_valeur2_emoji') || '🤝',
+    apropos_valeur2_titre: val(initialContenu, 'apropos_valeur2_titre') || 'Service client',
+    apropos_valeur2_texte: val(initialContenu, 'apropos_valeur2_texte'),
+    apropos_valeur3_emoji: val(initialContenu, 'apropos_valeur3_emoji') || '🚚',
+    apropos_valeur3_titre: val(initialContenu, 'apropos_valeur3_titre') || 'Livraison rapide',
+    apropos_valeur3_texte: val(initialContenu, 'apropos_valeur3_texte'),
+    apropos_stat1_valeur: val(initialContenu, 'apropos_stat1_valeur') || '500+',
+    apropos_stat1_label: val(initialContenu, 'apropos_stat1_label') || 'Projets réalisés',
+    apropos_stat2_valeur: val(initialContenu, 'apropos_stat2_valeur') || '3 ans',
+    apropos_stat2_label: val(initialContenu, 'apropos_stat2_label') || "D'expérience",
+    apropos_stat3_valeur: val(initialContenu, 'apropos_stat3_valeur') || '14',
+    apropos_stat3_label: val(initialContenu, 'apropos_stat3_label') || 'Régions couvertes',
+    apropos_stat4_valeur: val(initialContenu, 'apropos_stat4_valeur') || '98%',
+    apropos_stat4_label: val(initialContenu, 'apropos_stat4_label') || 'Clients satisfaits',
+  })
+  const [savingApropos, setSavingApropos] = useState(false)
+  const [savedApropos, setSavedApropos] = useState(false)
+
+  const sauvegarderApropos = async () => {
+    setSavingApropos(true)
+    setSavedApropos(false)
+    try {
+      await fetch('/api/admin/contenu', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cles: clesApropos }),
+      })
+      setSavedApropos(true)
+      setTimeout(() => setSavedApropos(false), 3000)
+    } finally {
+      setSavingApropos(false)
     }
   }
 
@@ -163,8 +204,8 @@ export default function ContenuEditor({ contenu: initialContenu, temoignages: in
   return (
     <div className="flex-1 p-6 lg:p-8 overflow-y-auto space-y-4">
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-fond rounded-xl p-1 w-fit">
-        {([['general', 'Général'], ['temoignages', 'Témoignages'], ['faq', 'FAQ']] as [Tab, string][]).map(([t, label]) => (
+      <div className="flex gap-1 bg-gray-fond rounded-xl p-1 w-fit flex-wrap">
+        {([['general', 'Général'], ['apropos', 'À propos'], ['temoignages', 'Témoignages'], ['faq', 'FAQ']] as [Tab, string][]).map(([t, label]) => (
           <button key={t} onClick={() => setTab(t)}
             className={`text-sm px-4 py-2 rounded-lg font-medium transition-colors ${
               tab === t ? 'bg-white text-blue-teralite shadow-sm' : 'text-text-mid hover:text-text-main'
@@ -204,14 +245,6 @@ export default function ContenuEditor({ contenu: initialContenu, temoignages: in
             ))}
           </div>
 
-          {/* À propos */}
-          <div className="bg-white rounded-xl border border-border-main p-5">
-            <h3 className="text-xs font-semibold text-text-light uppercase tracking-wider mb-3">Section À propos</h3>
-            <label className="block text-xs font-medium text-text-mid mb-1">Texte de présentation</label>
-            <textarea value={clesEdit.apropos_texte ?? ''} onChange={(e) => setClesEdit((p) => ({ ...p, apropos_texte: e.target.value }))}
-              rows={4} className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite resize-y" />
-          </div>
-
           {/* Contact */}
           <div className="bg-white rounded-xl border border-border-main p-5 space-y-3">
             <h3 className="text-xs font-semibold text-text-light uppercase tracking-wider">Informations contact</h3>
@@ -227,6 +260,91 @@ export default function ContenuEditor({ contenu: initialContenu, temoignages: in
                   className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite" />
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ——— À propos ——— */}
+      {tab === 'apropos' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-text-main">Page À propos</h2>
+            <div className="flex items-center gap-2">
+              {savedApropos && <span className="flex items-center gap-1 text-xs text-green-teralite"><CheckCircle2 className="w-3.5 h-3.5" />Sauvegardé</span>}
+              <button onClick={sauvegarderApropos} disabled={savingApropos}
+                className="flex items-center gap-1.5 bg-blue-teralite text-white text-sm px-4 py-2 rounded-lg hover:bg-blue-dark transition-colors disabled:opacity-60">
+                <Save className="w-4 h-4" />{savingApropos ? 'Enregistrement…' : 'Enregistrer tout'}
+              </button>
+            </div>
+          </div>
+
+          {/* Présentation */}
+          <div className="bg-white rounded-xl border border-border-main p-5 space-y-3">
+            <h3 className="text-xs font-semibold text-text-light uppercase tracking-wider">Présentation</h3>
+            <div>
+              <label className="block text-xs font-medium text-text-mid mb-1">Texte de présentation</label>
+              <textarea value={clesApropos.apropos_presentation ?? ''} onChange={(e) => setClesApropos((p) => ({ ...p, apropos_presentation: e.target.value }))}
+                rows={5} className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite resize-y" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-text-mid mb-1">Mission</label>
+              <textarea value={clesApropos.apropos_mission ?? ''} onChange={(e) => setClesApropos((p) => ({ ...p, apropos_mission: e.target.value }))}
+                rows={3} className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite resize-y" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-text-mid mb-1">Vision</label>
+              <textarea value={clesApropos.apropos_vision ?? ''} onChange={(e) => setClesApropos((p) => ({ ...p, apropos_vision: e.target.value }))}
+                rows={3} className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite resize-y" />
+            </div>
+          </div>
+
+          {/* Valeurs */}
+          <div className="bg-white rounded-xl border border-border-main p-5 space-y-4">
+            <h3 className="text-xs font-semibold text-text-light uppercase tracking-wider">Nos valeurs (3 cartes)</h3>
+            {([1, 2, 3] as const).map((n) => (
+              <div key={n} className="border border-border-main rounded-xl p-4 space-y-2">
+                <p className="text-xs font-semibold text-text-mid">Carte {n}</p>
+                <div className="grid grid-cols-4 gap-2">
+                  <div>
+                    <label className="block text-xs text-text-light mb-1">Emoji</label>
+                    <input value={clesApropos[`apropos_valeur${n}_emoji`] ?? ''} onChange={(e) => setClesApropos((p) => ({ ...p, [`apropos_valeur${n}_emoji`]: e.target.value }))}
+                      className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite" />
+                  </div>
+                  <div className="col-span-3">
+                    <label className="block text-xs text-text-light mb-1">Titre</label>
+                    <input value={clesApropos[`apropos_valeur${n}_titre`] ?? ''} onChange={(e) => setClesApropos((p) => ({ ...p, [`apropos_valeur${n}_titre`]: e.target.value }))}
+                      className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-text-light mb-1">Texte</label>
+                  <textarea value={clesApropos[`apropos_valeur${n}_texte`] ?? ''} onChange={(e) => setClesApropos((p) => ({ ...p, [`apropos_valeur${n}_texte`]: e.target.value }))}
+                    rows={2} className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite resize-none" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Chiffres clés */}
+          <div className="bg-white rounded-xl border border-border-main p-5 space-y-3">
+            <h3 className="text-xs font-semibold text-text-light uppercase tracking-wider">Chiffres clés (4 stats)</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {([1, 2, 3, 4] as const).map((n) => (
+                <div key={n} className="border border-border-main rounded-xl p-3 space-y-2">
+                  <p className="text-xs font-semibold text-text-mid">Stat {n}</p>
+                  <div>
+                    <label className="block text-xs text-text-light mb-1">Valeur (ex: 500+)</label>
+                    <input value={clesApropos[`apropos_stat${n}_valeur`] ?? ''} onChange={(e) => setClesApropos((p) => ({ ...p, [`apropos_stat${n}_valeur`]: e.target.value }))}
+                      className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite" />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-text-light mb-1">Label (ex: Projets réalisés)</label>
+                    <input value={clesApropos[`apropos_stat${n}_label`] ?? ''} onChange={(e) => setClesApropos((p) => ({ ...p, [`apropos_stat${n}_label`]: e.target.value }))}
+                      className="w-full border border-border-main rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-teralite" />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
