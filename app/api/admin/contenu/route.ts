@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 // GET /api/admin/contenu — toutes les données CMS
@@ -45,6 +46,11 @@ export async function PUT(request: NextRequest) {
         })
       )
     )
+
+    // Invalide le cache des pages publiques concernées
+    revalidatePath('/')
+    revalidatePath('/a-propos')
+    revalidatePath('/contact')
 
     return NextResponse.json({ ok: true })
   } catch (err) {
