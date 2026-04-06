@@ -53,7 +53,7 @@ const HERO_DEFAULTS = {
 async function getHeroContenu() {
   try {
     const items = await prisma.contenuSite.findMany({
-      where: { cle: { in: ['hero_titre', 'hero_sous_titre', 'hero_cta'] } },
+      where: { cle: { in: ['hero_titre', 'hero_sous_titre', 'hero_cta', 'banniere_active', 'banniere_texte', 'banniere_couleur'] } },
     })
     const fromDb = Object.fromEntries(items.map((i) => [i.cle, i.valeur]))
     return { ...HERO_DEFAULTS, ...fromDb }
@@ -71,10 +71,15 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ── BANNIÈRE OFFRE LANCEMENT ── */}
-      <div className="bg-orange-teralite text-white text-center text-sm font-medium py-2.5 px-4">
-        🎉 Offre de lancement : -10% sur votre première commande + livraison gratuite Dakar (100 premiers clients)
-      </div>
+      {/* ── BANNIÈRE PROMOTIONNELLE ── */}
+      {hero.banniere_active === 'true' && hero.banniere_texte && (
+        <div
+          className="text-white text-center text-sm font-medium py-2.5 px-4"
+          style={{ backgroundColor: hero.banniere_couleur ?? '#FFA000' }}
+        >
+          {hero.banniere_texte}
+        </div>
+      )}
 
       {/* ── HERO ── */}
       <section className="relative text-white py-16 md:py-24 px-4 overflow-hidden">
