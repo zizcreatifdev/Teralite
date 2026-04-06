@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import ContactForm from '@/components/site/ContactForm'
-import { MapPin, Mail, Clock, Globe, TrendingDown } from 'lucide-react'
+import { MapPin, Mail, Clock, Globe, TrendingDown, Phone } from 'lucide-react'
+import { prisma } from '@/lib/prisma'
+
+export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: 'Contact | Teralite — Éclairage LED Sénégal',
@@ -8,7 +11,27 @@ export const metadata: Metadata = {
     'Contactez l\'équipe Teralite par email ou via notre formulaire. contact@teralitegroup.com — Nous répondons sous 24h.',
 }
 
-export default function ContactPage() {
+const CONTACT_DEFAULTS = {
+  contact_telephone: '',
+  contact_whatsapp: '',
+  contact_adresse: 'Dakar, Sénégal',
+  contact_facebook: '',
+}
+
+async function getContactContenu() {
+  try {
+    const items = await prisma.contenuSite.findMany({
+      where: { cle: { startsWith: 'contact_' } },
+    })
+    const fromDb = Object.fromEntries(items.map((i) => [i.cle, i.valeur]))
+    return { ...CONTACT_DEFAULTS, ...fromDb }
+  } catch {
+    return CONTACT_DEFAULTS
+  }
+}
+
+export default async function ContactPage() {
+  const contact = await getContactContenu()
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
       <div className="text-center mb-10">
@@ -34,28 +57,85 @@ export default function ContactPage() {
           <div className="bg-white rounded-xl border border-border-main p-5">
             <h3 className="text-sm font-semibold text-text-main mb-4">Coordonnées</h3>
             <div className="space-y-3">
-              {[
-                { Icon: MapPin, label: 'Adresse', value: 'Dakar, Sénégal' },
-                { Icon: Mail, label: 'Email', value: 'contact@teralitegroup.com', href: 'mailto:contact@teralitegroup.com' },
-                { Icon: Globe, label: 'Site web', value: 'www.TeraLiteGroup.com', href: 'https://www.TeraLiteGroup.com' },
-                { Icon: Clock, label: 'Horaires', value: 'Lun–Sam, 8h–18h' },
-              ].map(({ Icon, label, value, href }) => (
-                <div key={label} className="flex items-start gap-3">
+              {contact.contact_telephone && (
+                <div className="flex items-start gap-3">
                   <div className="w-8 h-8 bg-blue-light rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-blue-teralite" />
+                    <Phone className="w-4 h-4 text-blue-teralite" />
                   </div>
                   <div>
-                    <p className="text-xs text-text-light">{label}</p>
-                    {href ? (
-                      <a href={href} className="text-sm text-blue-teralite hover:underline">
-                        {value}
-                      </a>
-                    ) : (
-                      <p className="text-sm text-text-main">{value}</p>
-                    )}
+                    <p className="text-xs text-text-light">Téléphone</p>
+                    <a href={`tel:${contact.contact_telephone}`} className="text-sm text-blue-teralite hover:underline">
+                      {contact.contact_telephone}
+                    </a>
                   </div>
                 </div>
-              ))}
+              )}
+              {contact.contact_whatsapp && (
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-light rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-4 h-4 text-blue-teralite" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-text-light">WhatsApp</p>
+                    <a href={`https://wa.me/${contact.contact_whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-teralite hover:underline">
+                      {contact.contact_whatsapp}
+                    </a>
+                  </div>
+                </div>
+              )}
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-blue-light rounded-lg flex items-center justify-center flex-shrink-0">
+                  <MapPin className="w-4 h-4 text-blue-teralite" />
+                </div>
+                <div>
+                  <p className="text-xs text-text-light">Adresse</p>
+                  <p className="text-sm text-text-main">{contact.contact_adresse}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-blue-light rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-4 h-4 text-blue-teralite" />
+                </div>
+                <div>
+                  <p className="text-xs text-text-light">Email</p>
+                  <a href="mailto:contact@teralitegroup.com" className="text-sm text-blue-teralite hover:underline">
+                    contact@teralitegroup.com
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-blue-light rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Globe className="w-4 h-4 text-blue-teralite" />
+                </div>
+                <div>
+                  <p className="text-xs text-text-light">Site web</p>
+                  <a href="https://www.TeraLiteGroup.com" target="_blank" rel="noopener noreferrer" className="text-sm text-blue-teralite hover:underline">
+                    www.TeraLiteGroup.com
+                  </a>
+                </div>
+              </div>
+              {contact.contact_facebook && (
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-blue-light rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Globe className="w-4 h-4 text-blue-teralite" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-text-light">Facebook</p>
+                    <a href={contact.contact_facebook} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-teralite hover:underline">
+                      Facebook Teralite
+                    </a>
+                  </div>
+                </div>
+              )}
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-blue-light rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-4 h-4 text-blue-teralite" />
+                </div>
+                <div>
+                  <p className="text-xs text-text-light">Horaires</p>
+                  <p className="text-sm text-text-main">Lun–Sam, 8h–18h</p>
+                </div>
+              </div>
             </div>
           </div>
 

@@ -43,10 +43,30 @@ async function getTemoignages() {
   }
 }
 
+const HERO_DEFAULTS = {
+  hero_titre: 'La lumière qui pense pour vous',
+  hero_sous_titre:
+    "Réduisez votre facture d'électricité jusqu'à 70% grâce à nos solutions LED intelligentes avec détection automatique. Simple. Efficace. Accessible.",
+  hero_cta: 'Voir le catalogue',
+}
+
+async function getHeroContenu() {
+  try {
+    const items = await prisma.contenuSite.findMany({
+      where: { cle: { in: ['hero_titre', 'hero_sous_titre', 'hero_cta'] } },
+    })
+    const fromDb = Object.fromEntries(items.map((i) => [i.cle, i.valeur]))
+    return { ...HERO_DEFAULTS, ...fromDb }
+  } catch {
+    return HERO_DEFAULTS
+  }
+}
+
 export default async function HomePage() {
-  const [produits, temoignages] = await Promise.all([
+  const [produits, temoignages, hero] = await Promise.all([
     getProduitsVedettes(),
     getTemoignages(),
+    getHeroContenu(),
   ])
 
   return (
@@ -75,18 +95,17 @@ export default async function HomePage() {
             Éclairage LED Intelligent · Dakar, Sénégal
           </p>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold leading-tight mb-6">
-            La lumière qui pense pour vous
+            {hero.hero_titre}
           </h1>
           <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
-            Réduisez votre facture d&apos;électricité jusqu&apos;à 70% grâce à nos solutions LED
-            intelligentes avec détection automatique. Simple. Efficace. Accessible.
+            {hero.hero_sous_titre}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
               href="/produits"
               className="bg-orange-teralite hover:bg-orange-dark text-white font-medium px-8 py-3 rounded-lg transition-colors"
             >
-              Voir le catalogue
+              {hero.hero_cta}
             </Link>
             <Link
               href="/devis"
