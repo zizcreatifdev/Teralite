@@ -4,7 +4,14 @@
 
 ## Statut global : 🟢 PRÊT POUR PRODUCTION
 
-## Dernière action : feat première connexion obligatoire — 2026-04-05
+## Dernière action : feat logos + hero image — 2026-04-06
+
+### Post-prod : Logos + Hero image ✅
+- ✅ Header site public → `next/image` avec `/logos/TeraLite_Logo-couleur.png`
+- ✅ Sidebar admin → `next/image` avec `/logos/TeraLite_Logo-blanc.png`
+- ✅ Hero homepage → image Unsplash éclairage + overlay `#002D50` 70% opacité
+- ✅ `next.config.mjs` → `images.unsplash.com` ajouté aux remotePatterns
+- ⚠️ Fichiers PNG à placer manuellement : `public/logos/TeraLite_Logo-couleur.png` + `TeraLite_Logo-blanc.png`
 
 ### Post-prod : Première connexion obligatoire ✅
 - ✅ `premiereConnexion Boolean @default(true)` sur modèle `Utilisateur`

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
 import ProductCard from '@/components/ui/ProductCard'
 import QuickDevisForm from '@/components/site/QuickDevisForm'
@@ -51,8 +52,20 @@ export default async function HomePage() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="bg-blue-teralite text-white py-16 md:py-24 px-4">
-        <div className="max-w-5xl mx-auto text-center">
+      <section className="relative text-white py-16 md:py-24 px-4 overflow-hidden">
+        {/* Image de fond */}
+        <Image
+          src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=1920&q=80"
+          alt="Éclairage LED professionnel"
+          fill
+          className="object-cover object-center"
+          priority
+          sizes="100vw"
+        />
+        {/* Overlay bleu-foncé 70% */}
+        <div className="absolute inset-0 bg-[#002D50]/70" />
+        {/* Contenu */}
+        <div className="relative max-w-5xl mx-auto text-center">
           <p className="text-orange-teralite text-xs font-semibold uppercase tracking-widest mb-4">
             Éclairage LED Professionnel · Dakar, Sénégal
           </p>

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ShoppingCart, Menu, X } from 'lucide-react'
 import { useState } from 'react'
@@ -22,8 +23,15 @@ export default function Header() {
     <header className="bg-white border-b border-border-main sticky top-0 z-50 shadow-sm">
       <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="text-blue-teralite font-bold text-xl tracking-tight">Teralite</span>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logos/TeraLite_Logo-couleur.png"
+            alt="TeraLite"
+            width={140}
+            height={44}
+            className="h-10 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Navigation desktop */}

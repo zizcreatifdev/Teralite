@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import {
@@ -115,7 +116,14 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-5 py-4 border-b border-white/10">
         <Link href="/admin">
-          <span className="text-white font-semibold text-lg tracking-wide">Teralite</span>
+          <Image
+            src="/logos/TeraLite_Logo-blanc.png"
+            alt="TeraLite"
+            width={120}
+            height={38}
+            className="h-9 w-auto object-contain"
+            priority
+          />
         </Link>
       </div>
 
